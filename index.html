@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<body>    
+	<h3>Jsforce contact demo</h3>
+    <div style="padding-top: 20px;">1. Login to Salesforce.</div>
+    <button onclick="javascript:jsforce.browser.login();">Login</button>
+    <div style="padding-top: 20px;">2. Then type the contact name to check the contact is exists or not</div>   
+    <div>
+        <label for="contact">Contact:</label>
+        <input type="text" id="contact" placeholder="Anshu Kumar">
+    </div>
+    <button onclick="javascript:checkContact();">Check</button>    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsforce/1.7.0/jsforce.min.js"></script>
+    <script>
+        var jsForceConn;
+
+        jsforce.browser.init({
+            clientId: "3MVG9d8..z.hDcPKo5HOmf6EJQxNMH5POrMdC.jy7WwCBFtOQNzAk.kkZJbnjLKjGEpFNJKxAl6hIGJp9JrEX",
+            redirectUri: "http://localhost:8080/callback.html",
+            proxyUrl: "https://node-salesforce-proxy.herokuapp.com/proxy/"
+        });
+
+        jsforce.browser.on('connect', function(conn) {
+            console.log('Successfully connected to Salesforce');
+            jsForceConn = conn;
+        });
+
+        function checkContact() {
+            var contact = document.getElementById('contact').value;
+
+            console.log('-----------------------------')
+            console.log('Starting...')
+
+            // Make sure jsForceConn is set and that we're logged in.
+            try {
+                if (jsforce.browser.isLoggedIn() == false || jsForceConn == null) {
+                    throw 'Not logged in.'
+                }
+            } catch (error) {
+                console.log('Not logged in. Log in first.');
+                return;
+            }
+
+            // Fetch or create the contact
+            var getContactPromise = new Promise((resolve, reject) => {
+                console.log('Getting contact: ' + contact);
+                getContact(resolve, jsForceConn, contact);
+            });
+
+            // When both API calls have finished...
+            Promise.all([getContactPromise]).then(values => {
+                console.log('All promises returned. Deleting contact.');                
+                var contactId = values[0];
+				var r = confirm('Contact found with id: ' + contactId + ' Do you really want to delete it?');
+				if (r) {
+					// Then set the Contractor for the Project
+					jsForceConn.sobject("Contact").destroy(contactId, function(err, ret) {
+						if (err || !ret.success) {
+							return console.error(err, ret);
+						}
+						alert('Contact Deleted Successfully : ' + ret.id);
+					});
+				}
+            });
+        }
+
+        function getContact(resolve, conn, contact) {						
+            var formattedContact = contact.replace(/'/g, "\\'");
+			console.log('formattedContact: ', formattedContact);	
+            conn.query("SELECT Id, Name, Email FROM Contact WHERE Name = '" + formattedContact + "'", function(err, res) {
+                if (err) {
+                    return console.error(err);
+                }
+                if (res['totalSize'] == 0) {
+                    alert("Contact doesn't exist");
+                    //createContact(resolve, conn, contact);
+                } else {
+                    console.log('Contact already exists, returning ID: ' + res['records'][0]['Id']);
+                    resolve(res['records'][0]['Id']);
+                }
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>

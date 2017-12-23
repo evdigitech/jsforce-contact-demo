@@ -1,0 +1,21 @@
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsforce/1.7.0/jsforce.min.js"></script>
+    <script>
+        jsforce.browser.init({
+            clientId: "3MVG9d8..z.hDcPKo5HOmf6EJQxNMH5POrMdC.jy7WwCBFtOQNzAk.kkZJbnjLKjGEpFNJKxAl6hIGJp9JrEX",
+            redirectUri: "http://localhost:8080/callback.html",
+            proxyUrl: "https://node-salesforce-proxy.herokuapp.com/proxy/"
+        });
+        jsforce.browser.on('connect', function(conn) {
+            window.close();
+        });
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>

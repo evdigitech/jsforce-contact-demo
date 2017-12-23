@@ -1,0 +1,15 @@
+{
+  "name": "jsforce-contact-demo",
+  "version": "1.0.0",
+  "description": "Demonstrates how to delete the existing contact usig jsForce library in the web browser.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "evdigitech",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
