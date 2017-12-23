@@ -8,7 +8,10 @@
 <body>    
 	<h3>Jsforce contact demo</h3>
     <div style="padding-top: 20px;">1. Login to Salesforce.</div>
-    <button onclick="javascript:jsforce.browser.login();">Login</button>
+	<div id="show-sf-login">
+		<button onclick="javascript:jsforce.browser.login();">Login</button>
+	</div>
+	<div id="show-login-message" style="display: none; color: rgb(13, 225, 13)">Successfully connected to Salesforce</div>
     <div style="padding-top: 20px;">2. Then type the contact name to check the contact is exists or not</div>   
     <div>
         <label for="contact">Contact:</label>
@@ -28,6 +31,8 @@
 
         jsforce.browser.on('connect', function(conn) {
             console.log('Successfully connected to Salesforce');
+			document.getElementById('show-login-message').style.display='block';
+			document.getElementById('show-sf-login').style.display='none';
             jsForceConn = conn;
         });
 
